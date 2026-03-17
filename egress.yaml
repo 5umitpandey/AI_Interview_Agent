@@ -1,0 +1,14 @@
+api_key: ${LIVEKIT_API_KEY}
+api_secret: ${LIVEKIT_API_SECRET}
+
+# LiveKit connection
+ws_url: ${LIVEKIT_URL}
+redis:
+  address: redis:6379
+
+# Where recordings go (MUST match docker volume)
+file_output:
+  filepath: /recordings
+
+logging:
+  level: info

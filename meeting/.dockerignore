@@ -1,0 +1,23 @@
+# dependencies
+node_modules
+.pnpm-store
+
+# next build
+.next
+
+# env files
+.env*
+!.env.production
+
+# git
+.git
+.gitignore
+
+# logs
+*.log
+
+# misc
+coverage
+dist
+build
+.vscode

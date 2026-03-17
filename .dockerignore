@@ -1,0 +1,16 @@
+# python
+env
+venv
+.venv
+__pycache__
+*.pyc
+
+# git
+.git
+.gitignore
+
+# logs
+*.log
+
+# misc
+.vscode

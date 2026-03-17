@@ -1,0 +1,7 @@
+{
+  "model": "gpt-4.1-nano",
+  "prompt_tokens": 1270,
+  "completion_tokens": 117,
+  "total_tokens": 1387,
+  "estimated_cost_usd": 0.0002607
+}

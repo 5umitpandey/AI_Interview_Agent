@@ -1,0 +1,212 @@
+# version: "3.9"
+
+# services:
+#   redis:
+#     image: redis:7
+#     container_name: livekit-redis
+#     restart: unless-stopped
+
+#   livekit:
+#     image: livekit/livekit-server:latest
+#     container_name: livekit
+#     command: ["--config", "/config/livekit.yaml"]
+#     ports:
+#       - "7880:7880"   # HTTP + WS
+#       - "7881:7881"   # RTC TCP
+#     volumes:
+#       - ./livekit.yaml:/config/livekit.yaml
+#     depends_on:
+#       - redis
+#     restart: unless-stopped
+
+#   egress:
+#     image: livekit/egress:latest
+#     container_name: livekit-egress
+#     depends_on:
+#       - livekit
+#       - redis
+#     environment:
+#       EGRESS_CONFIG_FILE: /config/egress.yaml
+#     volumes:
+#       - ./egress.yaml:/config/egress.yaml
+#       - ./recordings:/recordings   # ✅ MATCH PYTHON
+#     restart: unless-stopped
+#########################################################################################################
+#working one
+# services:
+
+#   redis:
+#     image: redis:7
+#     restart: unless-stopped
+
+#   livekit:
+#     image: livekit/livekit-server:latest
+#     command: ["--config", "/config/livekit.yaml"]
+#     ports:
+#       - "7880:7880"
+#       - "7881:7881"
+#     volumes:
+#       - ./livekit.yaml:/config/livekit.yaml
+#     environment:
+#       LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+#       LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+#     depends_on:
+#       - redis
+#     restart: unless-stopped
+
+#   egress:
+#     image: livekit/egress:latest
+#     depends_on:
+#       - livekit
+#       - redis
+#     env_file:
+#       - ./.env.local
+#     environment:
+#       EGRESS_CONFIG_FILE: /config/egress.yaml
+#     volumes:
+#       - ./egress.yaml:/config/egress.yaml
+#       - ./recordings:/recordings
+#     restart: unless-stopped
+
+#   backend:
+#     build: .
+#     ports:
+#       - "8048:8048"
+#     env_file:
+#       - ./.env.local
+#     volumes:
+#       - .:/app
+#     depends_on:
+#       - livekit
+    
+#   frontend:
+#     build:
+#       context: ./meeting
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3030:3030"
+#     environment:
+#       - NODE_ENV=production
+#       - PORT=3030
+#       - NEXT_PUBLIC_BACKEND_URL=https://unicam.discretal.com/ai-led-interview
+#       - NEXT_PUBLIC_BASE_PATH=/ai-led-interview-app
+#     depends_on:
+#       - backend
+  
+#   agent:
+#     build: .
+#     container_name: interview-agent
+#     command: python agent.py start
+#     depends_on:
+#       - livekit
+#       - redis
+#     env_file:
+#       - ./.env.local
+#     volumes:
+#       - .:/app
+#     restart: unless-stopped
+#################################################################################################################
+
+services:
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: interview_user
+      POSTGRES_PASSWORD: interview_pass
+      POSTGRES_DB: interview_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U interview_user -d interview_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  livekit:
+    image: livekit/livekit-server:latest
+    command: ["--config", "/config/livekit.yaml"]
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+    volumes:
+      - ./livekit.yaml:/config/livekit.yaml
+    env_file:
+      - ./.env.local
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  egress:
+    image: livekit/egress:latest
+    depends_on:
+      - livekit
+      - redis
+    env_file:
+      - ./.env.local
+    environment:
+      EGRESS_CONFIG_FILE: /config/egress.yaml
+    volumes:
+      - ./egress.yaml:/config/egress.yaml
+      - ./recordings:/recordings
+    restart: unless-stopped
+
+  backend:
+    build: .
+    ports:
+      - "8048:8048"
+    env_file:
+      - ./.env.local
+    volumes:
+      - .:/app
+      - ./resumes:/app/resumes
+      - ./transcripts:/app/transcripts
+      - ./evaluations:/app/evaluations
+    depends_on:
+      postgres:
+        condition: service_healthy
+      livekit:
+        condition: service_started
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./meeting
+      dockerfile: Dockerfile
+    ports:
+      - "3030:3030"
+    environment:
+      - NODE_ENV=production
+      - PORT=3030
+      - NEXT_PUBLIC_BACKEND_URL=https://unicam.discretal.com/ai-led-interview
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  agent:
+    build: .
+    container_name: interview-agent
+    command: python agent.py start
+    depends_on:
+      postgres:
+        condition: service_healthy
+      livekit:
+        condition: service_started
+      redis:
+        condition: service_started
+    env_file:
+      - ./.env.local
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+ 

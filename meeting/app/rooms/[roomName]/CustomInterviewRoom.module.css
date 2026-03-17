@@ -1,0 +1,401 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===================== HEADER ===================== */
+.header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  font-size: 28px;
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.headerSubtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* ===================== INFO PANEL ===================== */
+.infoPanel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  z-index: 10;
+}
+
+.infoItem {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #ccc;
+}
+
+.infoValue {
+  color: #00ff88;
+}
+
+.timer {
+  font-size: 24px;
+  font-weight: 700;
+  color: #00ff88;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ===================== VIDEO AREA ===================== */
+.videoArea {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 100px 20px;
+  overflow: auto;
+}
+
+.videoGrid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  grid-auto-flow: dense;
+}
+
+/* Adjust grid for different participant counts */
+.videoGrid :only-child {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  max-width: 800px;
+  max-height: 600px;
+  justify-self: center;
+  align-self: center;
+}
+
+.videoContainer {
+  position: relative;
+  background: #2a2a3e;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.participantVideo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+}
+
+.participantVideo video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noVideo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #666;
+  text-align: center;
+}
+
+.avatarPlaceholder {
+  font-size: 64px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.participantLabel {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.muteIndicator {
+  font-size: 14px;
+  color: #ffcc00;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff88;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ===================== CONTROL BAR ===================== */
+.controlBar {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 12px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 220;
+}
+
+.controlButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #404060;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.controlButton:hover {
+  background: #505080;
+  transform: scale(1.1);
+}
+
+.controlButton.active {
+  background: #667eea;
+}
+
+.controlButton.danger {
+  background: #e74c3c;
+}
+
+.controlButton.danger:hover {
+  background: #c0392b;
+}
+
+.buttonLabel {
+  position: absolute;
+  bottom: -30px;
+  font-size: 11px;
+  color: #fff;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.controlButton:hover .buttonLabel {
+  opacity: 1;
+}
+
+/* ===================== READY OVERLAY ===================== */
+.readyOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.readyContent {
+  text-align: center;
+  color: white;
+}
+
+.readyIcon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: scaleIn 0.6s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.readyTitle {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.readySubtitle {
+  font-size: 16px;
+  color: #aaa;
+}
+
+/* ===================== PINNED / FULLSCREEN ===================== */
+.pinnedContainer {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 100px; /* leave clear space above control bar (60px height + 20px bottom margin) */
+  z-index: 60;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  background: #000;
+}
+
+.videoArea.withPinned {
+  padding-bottom: 140px; /* lift grid up so pinned content and controls don't overlap */
+}
+
+.videoGrid.pinnedFade {
+  opacity: 0.2;
+  transition: opacity 0.25s ease;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1200px) {
+  .videoGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    top: 10px;
+    left: 10px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .headerTitle {
+    font-size: 14px;
+  }
+
+  .infoPanel {
+    top: 10px;
+    right: 10px;
+    font-size: 11px;
+    padding: 10px;
+  }
+
+  .controlBar {
+    bottom: 10px;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .controlButton {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .videoArea {
+    padding: 60px 10px 80px 10px;
+  }
+
+  .timer {
+    font-size: 18px;
+  }
+
+  .readyIcon {
+    font-size: 60px;
+  }
+
+  .readyTitle {
+    font-size: 24px;
+  }
+
+  .readySubtitle {
+    font-size: 14px;
+  }
+}
