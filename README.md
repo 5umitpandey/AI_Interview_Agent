@@ -172,6 +172,12 @@ python agent.py
   - **Tracks violations with timestamps** in state
   - All violations logged to console
 
+
+
+https://github.com/user-attachments/assets/16a16929-4b11-4bcb-950a-cde914174f80
+
+
+
 - **Backend** (`agent.py`):
   - LiveKit agent joins room
   - Waits for participant
